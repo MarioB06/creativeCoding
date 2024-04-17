@@ -1,61 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Landing Page</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <style></style>
-</head>
-<body data-spy="scroll" data-target=".navbar" data-offset="50">
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">Bozic Mario</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link" href="#section1">Tag 1</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#section2">Tag 2</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#section3">Tag 3</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#section4">Tag 4</a>
-        </li>
-      </ul>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Creative Coding - Mario</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <style>
+      body {
+        padding-top: 60px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <div class="container">
+        <a class="navbar-brand" href="">Creative Coding - Mario</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ml-auto">
+            <!-- <li class="nav-item">
+              <a class="nav-link" href="#day1">Tag 1</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#day2">Tag 2</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#day3">Tag 3</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#day4">Tag 4</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#day5">Tag 5</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#day6">Tag 6</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#day7">Tag 7</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#day8">Tag 8</a>
+            </li> -->
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mt-5">
+      <div id="day1" class="mb-5">
+        <h2>Shape editing</h2>
+        <ul>
+          <li><a href="html/1.1.html">Unterseite 1</a></li>
+          <li><a href="html/1.2.html">Unterseite 2</a></li>
+          <li><a href="html/1.3.html">Unterseite 3</a></li>
+        </ul>
+      </div>
     </div>
-  </nav>
 
-  <div id="section1" class="container-fluid bg-light py-5">
-    <h1 class="text-center">Tag 1</h1>
-    <p class="text-center"></p>
-    <center>
-      <div id="p5-canvas-1"></div>
-    </center>
-  </div>
+    <div class="container mt-5">
+      <div id="day1" class="mb-5">
+        <h2>Image editing</h2>
+        <ul>
+          <li><a href="html/2.1.html">My own image filter</a></li>
+          <li><a href="html/2.2.html">Image resizing</a></li>
+          <li><a href="html/2.3.html">Image glitch</a></li>
+          <li><a href="html/2.4.html">Random dithering effect</a></li>
+        </ul>
+      </div>
+    </div>
 
-  <div id="section2" class="container-fluid bg-info py-5">
-    <h1 class="text-center">Tag 2</h1>
-    <p class="text-center"></p>
-    <center>
-      <div id="p5-canvas-2"></div>
-    </center>
-  </div>
-
-
-
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-
-  <script src="js/sketch1.js"></script>
-  <script src="js/sketch2.js"></script>
-</body>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </body>
 </html>
