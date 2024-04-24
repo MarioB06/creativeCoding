@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Creative Coding - Mario</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <style>
+      body {
+        padding-top: 60px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <div class="container">
+        <a class="navbar-brand" href="../index.html">Home</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+    </nav>
+
+    <center>
+      <div class="container mt-5">
+        <center>
+          <div id="canvas-container">
+            <center>
+              <canvas id="myCanvas" width="400" height="400"></canvas>
+            </center>
+          </div>
+        </center>
+      </div>
+    </center>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+      let xPos, yPos;
+      let prevX, prevY;
+
+      function setup() {
+        createCanvas(400, 400);
+
+        xPos = width / 2;
+        yPos = height / 2;
+
+        prevX = xPos;
+        prevY = yPos;
+
+        background(220);
+      }
+
+      function draw() {
+        const directions = [
+          { x: 0, y: -1 },
+          { x: 1, y: -1 },
+          { x: 1, y: 0 },
+          { x: 1, y: 1 },
+          { x: 0, y: 1 },
+          { x: -1, y: 1 },
+          { x: -1, y: 0 },
+          { x: -1, y: -1 },
+        ];
+
+        let randomIndex = floor(random(8));
+        let direction = directions[randomIndex];
+
+        let newX = xPos + direction.x;
+        let newY = yPos + direction.y;
+
+        if (newX < 0 || newX >= width) {
+          newX = constrain(newX, 0, width - 1);
+        }
+        if (newY < 0 || newY >= height) {
+          newY = constrain(newY, 0, height - 1);
+        }
+
+        prevX = xPos;
+        prevY = yPos;
+
+        xPos = newX;
+        yPos = newY;
+
+        stroke(255, 100);
+        strokeWeight(2);
+        line(prevX, prevY, xPos, yPos);
+
+        noStroke();
+        fill(255, 0, 0);
+        ellipse(xPos, yPos, 2, 2);
+      }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+  </body>
+</html>
