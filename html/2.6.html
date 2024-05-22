@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>L-System - Fractal Trees</title>
+  <title>Combine Images</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <style>
     body {
@@ -36,73 +36,19 @@
   <script src="https://stackpath.amazonaws.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
   <script>
-    let axiom = "X";
-    let sentence = axiom;
-    let len = 100;
+    let img1, img2;
 
-    let rules = [
-      {
-        a: "X",
-        b: "F+[[X]-X]-F[-FX]+X"
-      },
-      {
-        a: "F",
-        b: "FF"
-      }
-    ];
-
-    function generate() {
-      let nextSentence = "";
-      for (let i = 0; i < sentence.length; i++) {
-        let current = sentence.charAt(i);
-        let found = false;
-        for (let j = 0; j < rules.length; j++) {
-          if (current == rules[j].a) {
-            found = true;
-            nextSentence += rules[j].b;
-            break;
-          }
-        }
-        if (!found) {
-          nextSentence += current;
-        }
-      }
-      sentence = nextSentence;
-      len *= 0.5;
-      createP(sentence);
-      turtle();
-    }
-
-    function turtle() {
-      background(51);
-      resetMatrix();
-      translate(width / 2, height);
-      stroke(255, 100);
-      for (let i = 0; i < sentence.length; i++) {
-        let current = sentence.charAt(i);
-
-        if (current == "F") {
-          line(0, 0, 0, -len);
-          translate(0, -len);
-        } else if (current == "+") {
-          rotate(PI / 6);
-        } else if (current == "-") {
-          rotate(-PI / 6);
-        } else if (current == "[") {
-          push();
-        } else if (current == "]") {
-          pop();
-        }
-      }
+    function preload() {
+      img1 = loadImage("../img/tag2.2.png");
+      img2 = loadImage("../img/tag2.1.png");
     }
 
     function setup() {
       let canvas = createCanvas(800, 600);
       canvas.parent("canvas-container");
-      background(51);
-      turtle();
-      let button = createButton("Generate");
-      button.mousePressed(generate);
+      image(img1, 0, 0);
+      blendMode(MULTIPLY);
+      image(img2, 0, 0);
     }
   </script>
 </body>
