@@ -160,21 +160,18 @@
       // Random movement with backtracking and obstacle avoidance
       if (frameCount % 10 !== 0) return; // Slow down the agent
       let options = [];
-      let next;
-      do {
-        options = [];
-        if (agent.position.x + resolution < width && !isObstacle(agent.position.x + resolution, agent.position.y)) options.push(createVector(agent.position.x + resolution, agent.position.y));
-        if (agent.position.x - resolution >= 0 && !isObstacle(agent.position.x - resolution, agent.position.y)) options.push(createVector(agent.position.x - resolution, agent.position.y));
-        if (agent.position.y + resolution < height && !isObstacle(agent.position.x, agent.position.y + resolution)) options.push(createVector(agent.position.x, agent.position.y + resolution));
-        if (agent.position.y - resolution >= 0 && !isObstacle(agent.position.x, agent.position.y - resolution)) options.push(createVector(agent.position.x, agent.position.y - resolution));
+      if (agent.position.x + resolution < width && !isObstacle(agent.position.x + resolution, agent.position.y)) options.push(createVector(agent.position.x + resolution, agent.position.y));
+      if (agent.position.x - resolution >= 0 && !isObstacle(agent.position.x - resolution, agent.position.y)) options.push(createVector(agent.position.x - resolution, agent.position.y));
+      if (agent.position.y + resolution < height && !isObstacle(agent.position.x, agent.position.y + resolution)) options.push(createVector(agent.position.x, agent.position.y + resolution));
+      if (agent.position.y - resolution >= 0 && !isObstacle(agent.position.x, agent.position.y - resolution)) options.push(createVector(agent.position.x, agent.position.y - resolution));
 
-        if (options.length === 0) return; // No available moves
-
-        next = random(options);
-      } while (agent.history.includes(next.toString()));
-
-      agent.history.push(next.toString());
-      agent.position = next;
+      if (options.length > 0) {
+        let next = random(options);
+        if (!agent.history.includes(next.toString())) {
+          agent.history.push(next.toString());
+          agent.position = next;
+        }
+      }
     }
 
     function algorithm2(agent) {
@@ -255,10 +252,10 @@
 
     function getNeighbors(pos) {
       let neighbors = [];
-      if (pos.x + resolution < width) neighbors.push(createVector(pos.x + resolution, pos.y));
-      if (pos.x - resolution >= 0) neighbors.push(createVector(pos.x - resolution, pos.y));
-      if (pos.y + resolution < height) neighbors.push(createVector(pos.x, pos.y + resolution));
-      if (pos.y - resolution >= 0) neighbors.push(createVector(pos.x, pos.y - resolution));
+      if (pos.x + resolution < width && !isObstacle(pos.x + resolution, pos.y)) neighbors.push(createVector(pos.x + resolution, pos.y));
+      if (pos.x - resolution >= 0 && !isObstacle(pos.x - resolution, pos.y)) neighbors.push(createVector(pos.x - resolution, pos.y));
+      if (pos.y + resolution < height && !isObstacle(pos.x, pos.y + resolution)) neighbors.push(createVector(pos.x, pos.y + resolution));
+      if (pos.y - resolution >= 0 && !isObstacle(pos.x, pos.y - resolution)) neighbors.push(createVector(pos.x, pos.y - resolution));
       return neighbors;
     }
 
