@@ -1,61 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Creative Coding - Mario</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
-  <style>
-    body {
-      padding-top: 60px;
-    }
-  </style>
-</head>
-<body>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-    <div class="container">
-      <a class="navbar-brand" href="../index.html">Home</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-    </div>
-  </nav>
-
-  <center>
-    <div class="container mt-5">
-      <center>
-        <div id="canvas-container">
-          <center>
-            <canvas id="myCanvas" width="400" height="400"></canvas>
-          </center>
-        </div>
-      </center>
-    </div>
-  </center>
-
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-  <script>
-    function setup() {
-      let canvasContainer = document.getElementById("canvas-container");
-      let canvas = createCanvas(400, 400, ["canvas1"]);
-      canvas.parent("canvas-container");
-      background(0, 0, 255);
-      strokeWeight(5);
-
-      for (let i = 0; i <= innerWidth; i += 20) {
-        stroke(0, 255, 0);
-        line(0, i, i, width);
-
-        stroke(255, 0, 0);
-        line(i, 0, height, i);
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Creative Coding - Mario</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <style>
+      body {
+        padding-top: 60px;
       }
-    }
+      .navbar {
+        background-color: #007bff !important;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <div class="container">
+        <a class="navbar-brand" href="../index.html">Home</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+    </nav>
 
-    function draw() {}
-  </script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-</body>
+    <center>
+      <div class="container mt-5">
+        <center>
+          <div id="canvas-container">
+            <center>
+              <canvas id="myCanvas" width="400" height="400"></canvas>
+            </center>
+          </div>
+        </center>
+      </div>
+    </center>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+      function setup() {
+        let canvasContainer = document.getElementById("canvas-container");
+        let canvas = createCanvas(400, 400, ["canvas1"]);
+        canvas.parent("canvas-container");
+        background(0, 0, 255);
+        strokeWeight(5);
+
+        for (let i = 0; i <= innerWidth; i += 20) {
+          stroke(0, 255, 0);
+          line(0, i, i, width);
+
+          stroke(255, 0, 0);
+          line(i, 0, height, i);
+        }
+      }
+
+      function draw() {}
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+  </body>
 </html>

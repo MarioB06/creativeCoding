@@ -12,6 +12,9 @@
       body {
         padding-top: 60px;
       }
+      .navbar {
+        background-color: #007bff !important;
+      }
 
       #info {
         margin-top: 150px;
@@ -85,7 +88,6 @@
         canvas.parent("canvas-container"); // Bindet das Canvas an den Container
         cols = width / resolution;
         rows = height / resolution;
-        
 
         grid = make2DArray(cols, rows);
         for (let i = 0; i < cols; i++) {
@@ -157,13 +159,19 @@
       }
 
       function displayTopColors() {
-        let sortedColors = Object.entries(colorCounts).sort((a, b) => b[1] - a[1]);
+        let sortedColors = Object.entries(colorCounts).sort(
+          (a, b) => b[1] - a[1]
+        );
         let topColors = sortedColors.slice(0, 5);
 
         let info = select("#info");
-        info.html('');
+        info.html("");
         topColors.forEach(([colorStr, count], index) => {
-          let colorDiv = createDiv(`<div class="color-box" style="background-color:${colorStr};"></div>  ${index + 1}.  ${count}`);
+          let colorDiv = createDiv(
+            `<div class="color-box" style="background-color:${colorStr};"></div>  ${
+              index + 1
+            }.  ${count}`
+          );
           colorDiv.parent(info);
         });
       }

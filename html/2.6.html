@@ -1,55 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Combine Images</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <style>
-    body {
-      padding-top: 60px;
-    }
-    #canvas-container {
-      display: flex;
-      justify-content: center;
-    }
-  </style>
-</head>
-<body>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-    <div class="container">
-      <a class="navbar-brand" href="../index.html">Home</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Combine Images</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <style>
+      body {
+        padding-top: 60px;
+      }
+      .navbar {
+        background-color: #007bff !important;
+      }
+      #canvas-container {
+        display: flex;
+        justify-content: center;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <div class="container">
+        <a class="navbar-brand" href="../index.html">Home</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+    </nav>
+
+    <div class="container mt-5">
+      <div id="canvas-container">
+        <canvas id="myCanvas" width="800" height="600"></canvas>
+      </div>
     </div>
-  </nav>
 
-  <div class="container mt-5">
-    <div id="canvas-container">
-      <canvas id="myCanvas" width="800" height="600"></canvas>
-    </div>
-  </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.amazonaws.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <script>
+      let img1, img2;
 
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.amazonaws.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-  <script>
-    let img1, img2;
+      function preload() {
+        img1 = loadImage("../img/tag2.2.png");
+        img2 = loadImage("../img/tag2.1.png");
+      }
 
-    function preload() {
-      img1 = loadImage("../img/tag2.2.png");
-      img2 = loadImage("../img/tag2.1.png");
-    }
-
-    function setup() {
-      let canvas = createCanvas(800, 600);
-      canvas.parent("canvas-container");
-      image(img1, 0, 0);
-      blendMode(MULTIPLY);
-      image(img2, 0, 0);
-    }
-  </script>
-</body>
+      function setup() {
+        let canvas = createCanvas(800, 600);
+        canvas.parent("canvas-container");
+        image(img1, 0, 0);
+        blendMode(MULTIPLY);
+        image(img2, 0, 0);
+      }
+    </script>
+  </body>
 </html>
