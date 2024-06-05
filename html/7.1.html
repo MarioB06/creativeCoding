@@ -27,7 +27,7 @@
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
       <div class="container">
-        <a class="navbar-brand" href="#">Creative Race Simulation</a>
+        <a class="navbar-brand" href="../index.html">Home</a>
       </div>
     </nav>
 
@@ -35,354 +35,253 @@
       <div id="canvas-container">
         <canvas id="myCanvas" width="800" height="600"></canvas>
       </div>
-      <div class="info">
-        <button class="btn btn-primary" onclick="startRace()">
-          Start Race
-        </button>
-      </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.amazonaws.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <script src="sketch.js"></script>
     <script>
-      let cols, rows;
-      let grid;
-      let resolution = 20;
-      let agents = [];
-      let startPoint, endPoint;
-      let obstacles = [];
+      let map;
+      let players = [];
+      let gridSize = 40;
+      let rows, cols;
+      let start, goal;
+      let moveDelay = 20;
+      let lastMoveTime = 0;
 
       function setup() {
-        let canvas = createCanvas(800, 600);
-        canvas.parent("canvas-container");
-
-        cols = floor(width / resolution);
-        rows = floor(height / resolution);
-
-        grid = make2DArray(cols, rows);
-
-        startRace();
+        createCanvas(800, 600); // Beibehalte die Größe des Canvas
+        rows = height / gridSize;
+        cols = width / gridSize;
+        map = generateMap(rows, cols);
+        [start, goal] = getStartAndGoal(map);
+        players.push(
+          new Player(start.x, start.y, algorithm1, color(255, 0, 0))
+        );
+        players.push(
+          new Player(start.x, start.y, algorithm2, color(0, 255, 0))
+        );
+        players.push(
+          new Player(start.x, start.y, algorithm3, color(0, 0, 255))
+        );
       }
 
       function draw() {
         background(220);
-        drawGrid();
-        drawObstacles();
-        drawStartAndEndPoints();
-
-        for (let agent of agents) {
-          agent.update();
-          agent.show();
+        drawMap(map);
+        if (millis() - lastMoveTime > moveDelay) {
+          players.forEach((player) => {
+            player.update(map, goal);
+          });
+          lastMoveTime = millis();
         }
+        players.forEach((player) => {
+          player.show();
+        });
       }
 
-      function startRace() {
-        agents = [];
-        obstacles = [];
-        startPoint = createVector(floor(random(cols)), floor(random(rows)));
-        endPoint = createVector(floor(random(cols)), floor(random(rows)));
-
-        // Create random obstacles
-        for (let i = 0; i < 200; i++) {
-          // Increased the number of obstacles to 200
-          let obstacle = createVector(floor(random(cols)), floor(random(rows)));
-          if (!obstacle.equals(startPoint) && !obstacle.equals(endPoint)) {
-            obstacles.push(obstacle);
+      function generateMap(rows, cols) {
+        let map = Array.from({ length: rows }, () => Array(cols).fill(0));
+        for (let i = 0; i < rows; i++) {
+          for (let j = 0; j < cols; j++) {
+            if (random(1) < 0.3) {
+              map[i][j] = 1; // Hindernis
+            }
           }
         }
-
-        agents.push(
-          new Agent(startPoint.x, startPoint.y, color(255, 0, 0), algorithm1)
-        );
-        agents.push(
-          new Agent(
-            startPoint.x,
-            startPoint.y,
-            color(0, 255, 0),
-            algorithm2,
-            true
-          )
-        ); // Added an extra parameter to slow down green agent
-        agents.push(
-          new Agent(startPoint.x, startPoint.y, color(0, 0, 255), algorithm3)
-        );
+        return map;
       }
 
-      function drawGrid() {
-        for (let i = 0; i < cols; i++) {
-          for (let j = 0; j < rows; j++) {
-            let x = i * resolution;
-            let y = j * resolution;
+      function getStartAndGoal(map) {
+        let start, goal;
+        do {
+          start = { x: floor(random(cols)), y: floor(random(rows)) };
+        } while (map[start.y][start.x] === 1);
+
+        do {
+          goal = { x: floor(random(cols)), y: floor(random(rows)) };
+        } while (
+          map[goal.y][goal.x] === 1 ||
+          (goal.x === start.x && goal.y === start.y)
+        );
+
+        return [start, goal];
+      }
+      function drawMap(map) {
+        for (let i = 0; i < rows; i++) {
+          for (let j = 0; j < cols; j++) {
+            if (map[i][j] === 1) {
+              fill(0);
+            } else {
+              fill(255);
+            }
             stroke(0);
-            noFill();
-            rect(x, y, resolution, resolution);
+            rect(j * gridSize, i * gridSize, gridSize, gridSize);
           }
         }
-      }
-
-      function drawObstacles() {
-        fill(100);
-        noStroke();
-        for (let obstacle of obstacles) {
-          rect(
-            obstacle.x * resolution,
-            obstacle.y * resolution,
-            resolution,
-            resolution
-          );
-        }
-      }
-
-      function drawStartAndEndPoints() {
         fill(0, 255, 0);
-        noStroke();
-        ellipse(
-          startPoint.x * resolution + resolution / 2,
-          startPoint.y * resolution + resolution / 2,
-          resolution
-        );
-        textAlign(CENTER, CENTER);
-        fill(0);
-        textSize(16);
-        text(
-          "Start",
-          startPoint.x * resolution + resolution / 2,
-          startPoint.y * resolution + resolution / 2
-        );
-
-        fill(255, 0, 0);
-        noStroke();
-        ellipse(
-          endPoint.x * resolution + resolution / 2,
-          endPoint.y * resolution + resolution / 2,
-          resolution
-        );
-        fill(0);
-        textSize(16);
-        text(
-          "Ziel",
-          endPoint.x * resolution + resolution / 2,
-          endPoint.y * resolution + resolution / 2
-        );
+        rect(goal.x * gridSize, goal.y * gridSize, gridSize, gridSize);
       }
 
-      function make2DArray(cols, rows) {
-        let arr = new Array(cols);
-        for (let i = 0; i < arr.length; i++) {
-          arr[i] = new Array(rows);
-        }
-        return arr;
-      }
-
-      class Agent {
-        constructor(x, y, col, algorithm, slow = false) {
-          this.position = createVector(
-            x * resolution + resolution / 2,
-            y * resolution + resolution / 2
-          );
-          this.color = col;
+      class Player {
+        constructor(x, y, algorithm, col) {
+          this.x = x;
+          this.y = y;
           this.algorithm = algorithm;
-          this.history = [];
+          this.col = col;
           this.path = [];
-          this.slow = slow; // New attribute to slow down the agent
+          this.finished = false;
         }
 
-        update() {
-          if (this.slow && frameCount % 20 !== 0) return; // Slow down the agent if the slow attribute is true
-          this.algorithm(this);
+        update(map, goal) {
+          if (this.finished) return;
+          let nextMove = this.algorithm(this.x, this.y, map, goal);
+          if (nextMove && map[nextMove[1]][nextMove[0]] === 0) {
+            this.x = nextMove[0];
+            this.y = nextMove[1];
+            this.path.push(nextMove);
+            if (this.x === goal.x && this.y === goal.y) {
+              this.finished = true;
+            }
+          }
         }
 
         show() {
-          fill(this.color);
+          fill(this.col);
           noStroke();
-          ellipse(this.position.x, this.position.y, resolution / 2);
+          ellipse(
+            this.x * gridSize + gridSize / 2,
+            this.y * gridSize + gridSize / 2,
+            gridSize / 2
+          );
+          noFill();
+          stroke(this.col);
+          beginShape();
+          this.path.forEach((p) =>
+            vertex(
+              p[0] * gridSize + gridSize / 2,
+              p[1] * gridSize + gridSize / 2
+            )
+          );
+          endShape();
         }
       }
 
-      function algorithm1(agent) {
-        // Random movement with backtracking and obstacle avoidance
-        if (frameCount % 10 !== 0) return; // Slow down the agent
-        let options = [];
-        if (
-          agent.position.x + resolution < width &&
-          !isObstacle(agent.position.x + resolution, agent.position.y)
-        )
-          options.push(
-            createVector(agent.position.x + resolution, agent.position.y)
-          );
-        if (
-          agent.position.x - resolution >= 0 &&
-          !isObstacle(agent.position.x - resolution, agent.position.y)
-        )
-          options.push(
-            createVector(agent.position.x - resolution, agent.position.y)
-          );
-        if (
-          agent.position.y + resolution < height &&
-          !isObstacle(agent.position.x, agent.position.y + resolution)
-        )
-          options.push(
-            createVector(agent.position.x, agent.position.y + resolution)
-          );
-        if (
-          agent.position.y - resolution >= 0 &&
-          !isObstacle(agent.position.x, agent.position.y - resolution)
-        )
-          options.push(
-            createVector(agent.position.x, agent.position.y - resolution)
-          );
 
-        if (options.length > 0) {
-          let next = random(options);
-          if (!agent.history.includes(next.toString())) {
-            agent.history.push(next.toString());
-            agent.position = next;
+      // Player 1
+      function algorithm1(x, y, map, goal) {
+        // Einfacher Algorithmus, der Hindernissen ausweicht und auf das Ziel zugeht
+        let moves = [
+          [x + 1, y],
+          [x - 1, y],
+          [x, y + 1],
+          [x, y - 1],
+        ];
+        moves = moves.filter((move) => isValidMove(move[0], move[1], map));
+        if (moves.length > 0) {
+          return moves[floor(random(moves.length))];
+        }
+        return null;
+      }
+
+
+      // Beste Lösung
+      function algorithm2(x, y, map, goal) {
+        class Node {
+          constructor(x, y, g, h, parent = null) {
+            this.x = x;
+            this.y = y;
+            this.g = g;
+            this.h = h;
+            this.f = g + h;
+            this.parent = parent;
           }
         }
-      }
 
-      function algorithm2(agent) {
-        // Greedy Best-First Search
-        if (agent.path.length === 0) {
-          let openSet = [];
-          let closedSet = new Set();
-          let start = {
-            pos: agent.position.copy(),
-            path: [],
-            f: heuristic(agent.position, endPoint),
-          };
-          openSet.push(start);
+        function heuristic(x, y, goal) {
+          return abs(x - goal.x) + abs(y - goal.y); // Manhattan-Distanz
+        }
 
-          while (openSet.length > 0) {
-            let current = openSet.reduce((acc, node) =>
-              acc.f < node.f ? acc : node
-            );
-            if (
-              current.pos.equals(
-                createVector(
-                  endPoint.x * resolution + resolution / 2,
-                  endPoint.y * resolution + resolution / 2
-                )
-              )
-            ) {
-              agent.path = current.path;
-              break;
+        let openSet = [];
+        let closedSet = new Set();
+        let startNode = new Node(x, y, 0, heuristic(x, y, goal));
+        openSet.push(startNode);
+
+        while (openSet.length > 0) {
+          let currentNode = openSet.reduce((prev, curr) =>
+            prev.f < curr.f ? prev : curr
+          );
+
+          if (currentNode.x === goal.x && currentNode.y === goal.y) {
+            let path = [];
+            let temp = currentNode;
+            while (temp) {
+              path.push([temp.x, temp.y]);
+              temp = temp.parent;
             }
+            path.reverse();
+            if (path.length > 1) return path[1]; // Nächster Schritt
+          }
 
-            openSet = openSet.filter((node) => node !== current);
-            closedSet.add(current.pos.toString());
+          openSet = openSet.filter((node) => node !== currentNode);
+          closedSet.add(`${currentNode.x},${currentNode.y}`);
 
-            let neighbors = getNeighbors(current.pos);
-            for (let neighbor of neighbors) {
-              if (
-                !isObstacle(neighbor.x, neighbor.y) &&
-                !closedSet.has(neighbor.toString())
-              ) {
-                let g = current.path.length + 1;
-                let f = g + heuristic(neighbor, endPoint);
-                let openNode = openSet.find((node) =>
-                  node.pos.equals(neighbor)
-                );
-                if (!openNode) {
-                  openSet.push({
-                    pos: neighbor,
-                    path: [...current.path, neighbor],
-                    f: f,
-                  });
-                } else if (g < openNode.path.length) {
-                  openNode.path = [...current.path, neighbor];
-                  openNode.f = f;
+          let neighbors = [
+            { x: currentNode.x + 1, y: currentNode.y },
+            { x: currentNode.x - 1, y: currentNode.y },
+            { x: currentNode.x, y: currentNode.y + 1 },
+            { x: currentNode.x, y: currentNode.y - 1 },
+          ];
+
+          neighbors.forEach((neighbor) => {
+            if (
+              isValidMove(neighbor.x, neighbor.y, map) &&
+              !closedSet.has(`${neighbor.x},${neighbor.y}`)
+            ) {
+              let gScore = currentNode.g + 1;
+              let hScore = heuristic(neighbor.x, neighbor.y, goal);
+              let fScore = gScore + hScore;
+              let existingNode = openSet.find(
+                (node) => node.x === neighbor.x && node.y === neighbor.y
+              );
+              if (existingNode) {
+                if (gScore < existingNode.g) {
+                  existingNode.g = gScore;
+                  existingNode.f = fScore;
+                  existingNode.parent = currentNode;
                 }
+              } else {
+                openSet.push(
+                  new Node(neighbor.x, neighbor.y, gScore, hScore, currentNode)
+                );
               }
             }
-          }
+          });
         }
 
-        if (frameCount % 10 === 0 && agent.path.length > 0) {
-          agent.position = agent.path.shift();
+        return null;
+      }
+
+      // Spieler 2
+      function algorithm3(x, y, map, goal) {
+        // Zufälliger Tiefensuche-Algorithmus (Placeholder für Beispiel)
+        let moves = [
+          [x + 1, y],
+          [x - 1, y],
+          [x, y + 1],
+          [x, y - 1],
+        ];
+        moves = moves.filter((move) => isValidMove(move[0], move[1], map));
+        if (moves.length > 0) {
+          return moves[floor(random(moves.length))];
         }
+        return null;
       }
 
-      function algorithm3(agent) {
-        // Depth-First Search (DFS)
-        if (agent.path.length === 0) {
-          let stack = [];
-          let visited = new Set();
-          let start = { pos: agent.position.copy(), path: [] };
-          stack.push(start);
-
-          while (stack.length > 0) {
-            let current = stack.pop();
-            if (
-              current.pos.equals(
-                createVector(
-                  endPoint.x * resolution + resolution / 2,
-                  endPoint.y * resolution + resolution / 2
-                )
-              )
-            ) {
-              agent.path = current.path;
-              break;
-            }
-
-            if (visited.has(current.pos.toString())) continue;
-            visited.add(current.pos.toString());
-
-            let neighbors = getNeighbors(current.pos);
-            for (let neighbor of neighbors) {
-              if (
-                !isObstacle(neighbor.x, neighbor.y) &&
-                !visited.has(neighbor.toString())
-              ) {
-                stack.push({
-                  pos: neighbor,
-                  path: [...current.path, neighbor],
-                });
-              }
-            }
-          }
-        }
-
-        if (frameCount % 10 === 0 && agent.path.length > 0) {
-          agent.position = agent.path.shift();
-        }
-      }
-
-      function heuristic(pos1, pos2) {
-        return dist(
-          pos1.x,
-          pos1.y,
-          pos2.x * resolution + resolution / 2,
-          pos2.y * resolution + resolution / 2
-        );
-      }
-
-      function getNeighbors(pos) {
-        let neighbors = [];
-        if (
-          pos.x + resolution < width &&
-          !isObstacle(pos.x + resolution, pos.y)
-        )
-          neighbors.push(createVector(pos.x + resolution, pos.y));
-        if (pos.x - resolution >= 0 && !isObstacle(pos.x - resolution, pos.y))
-          neighbors.push(createVector(pos.x - resolution, pos.y));
-        if (
-          pos.y + resolution < height &&
-          !isObstacle(pos.x, pos.y + resolution)
-        )
-          neighbors.push(createVector(pos.x, pos.y + resolution));
-        if (pos.y - resolution >= 0 && !isObstacle(pos.x, pos.y - resolution))
-          neighbors.push(createVector(pos.x, pos.y - resolution));
-        return neighbors;
-      }
-
-      function isObstacle(x, y) {
-        return obstacles.some(
-          (obstacle) =>
-            obstacle.x * resolution === x && obstacle.y * resolution === y
-        );
+      function isValidMove(x, y, map) {
+        return x >= 0 && y >= 0 && x < cols && y < rows && map[y][x] === 0;
       }
     </script>
   </body>

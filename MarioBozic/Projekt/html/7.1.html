@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Creative Race Simulation</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <style>
+      body {
+        padding-top: 60px;
+      }
+      .navbar {
+        background-color: #007bff !important;
+      }
+      #canvas-container {
+        display: flex;
+        justify-content: center;
+      }
+      .info {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <div class="container">
+        <a class="navbar-brand" href="../index.html">Home</a>
+      </div>
+    </nav>
+
+    <div class="container mt-5">
+      <div id="canvas-container">
+        <canvas id="myCanvas" width="800" height="600"></canvas>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <script src="sketch.js"></script>
+    <script>
+      let map;
+      let players = [];
+      let gridSize = 40;
+      let rows, cols;
+      let start, goal;
+      let moveDelay = 20;
+      let lastMoveTime = 0;
+
+      function setup() {
+        createCanvas(800, 600); // Beibehalte die Größe des Canvas
+        rows = height / gridSize;
+        cols = width / gridSize;
+        map = generateMap(rows, cols);
+        [start, goal] = getStartAndGoal(map);
+        players.push(
+          new Player(start.x, start.y, algorithm1, color(255, 0, 0))
+        );
+        players.push(
+          new Player(start.x, start.y, algorithm2, color(0, 255, 0))
+        );
+        players.push(
+          new Player(start.x, start.y, algorithm3, color(0, 0, 255))
+        );
+      }
+
+      function draw() {
+        background(220);
+        drawMap(map);
+        if (millis() - lastMoveTime > moveDelay) {
+          players.forEach((player) => {
+            player.update(map, goal);
+          });
+          lastMoveTime = millis();
+        }
+        players.forEach((player) => {
+          player.show();
+        });
+      }
+
+      function generateMap(rows, cols) {
+        let map = Array.from({ length: rows }, () => Array(cols).fill(0));
+        for (let i = 0; i < rows; i++) {
+          for (let j = 0; j < cols; j++) {
+            if (random(1) < 0.3) {
+              map[i][j] = 1; // Hindernis
+            }
+          }
+        }
+        return map;
+      }
+
+      function getStartAndGoal(map) {
+        let start, goal;
+        do {
+          start = { x: floor(random(cols)), y: floor(random(rows)) };
+        } while (map[start.y][start.x] === 1);
+
+        do {
+          goal = { x: floor(random(cols)), y: floor(random(rows)) };
+        } while (
+          map[goal.y][goal.x] === 1 ||
+          (goal.x === start.x && goal.y === start.y)
+        );
+
+        return [start, goal];
+      }
+      function drawMap(map) {
+        for (let i = 0; i < rows; i++) {
+          for (let j = 0; j < cols; j++) {
+            if (map[i][j] === 1) {
+              fill(0);
+            } else {
+              fill(255);
+            }
+            stroke(0);
+            rect(j * gridSize, i * gridSize, gridSize, gridSize);
+          }
+        }
+        fill(0, 255, 0);
+        rect(goal.x * gridSize, goal.y * gridSize, gridSize, gridSize);
+      }
+
+      class Player {
+        constructor(x, y, algorithm, col) {
+          this.x = x;
+          this.y = y;
+          this.algorithm = algorithm;
+          this.col = col;
+          this.path = [];
+          this.finished = false;
+        }
+
+        update(map, goal) {
+          if (this.finished) return;
+          let nextMove = this.algorithm(this.x, this.y, map, goal);
+          if (nextMove && map[nextMove[1]][nextMove[0]] === 0) {
+            this.x = nextMove[0];
+            this.y = nextMove[1];
+            this.path.push(nextMove);
+            if (this.x === goal.x && this.y === goal.y) {
+              this.finished = true;
+            }
+          }
+        }
+
+        show() {
+          fill(this.col);
+          noStroke();
+          ellipse(
+            this.x * gridSize + gridSize / 2,
+            this.y * gridSize + gridSize / 2,
+            gridSize / 2
+          );
+          noFill();
+          stroke(this.col);
+          beginShape();
+          this.path.forEach((p) =>
+            vertex(
+              p[0] * gridSize + gridSize / 2,
+              p[1] * gridSize + gridSize / 2
+            )
+          );
+          endShape();
+        }
+      }
+
+
+      // Player 1
+      function algorithm1(x, y, map, goal) {
+        // Einfacher Algorithmus, der Hindernissen ausweicht und auf das Ziel zugeht
+        let moves = [
+          [x + 1, y],
+          [x - 1, y],
+          [x, y + 1],
+          [x, y - 1],
+        ];
+        moves = moves.filter((move) => isValidMove(move[0], move[1], map));
+        if (moves.length > 0) {
+          return moves[floor(random(moves.length))];
+        }
+        return null;
+      }
+
+
+      // Beste Lösung
+      function algorithm2(x, y, map, goal) {
+        class Node {
+          constructor(x, y, g, h, parent = null) {
+            this.x = x;
+            this.y = y;
+            this.g = g;
+            this.h = h;
+            this.f = g + h;
+            this.parent = parent;
+          }
+        }
+
+        function heuristic(x, y, goal) {
+          return abs(x - goal.x) + abs(y - goal.y); // Manhattan-Distanz
+        }
+
+        let openSet = [];
+        let closedSet = new Set();
+        let startNode = new Node(x, y, 0, heuristic(x, y, goal));
+        openSet.push(startNode);
+
+        while (openSet.length > 0) {
+          let currentNode = openSet.reduce((prev, curr) =>
+            prev.f < curr.f ? prev : curr
+          );
+
+          if (currentNode.x === goal.x && currentNode.y === goal.y) {
+            let path = [];
+            let temp = currentNode;
+            while (temp) {
+              path.push([temp.x, temp.y]);
+              temp = temp.parent;
+            }
+            path.reverse();
+            if (path.length > 1) return path[1]; // Nächster Schritt
+          }
+
+          openSet = openSet.filter((node) => node !== currentNode);
+          closedSet.add(`${currentNode.x},${currentNode.y}`);
+
+          let neighbors = [
+            { x: currentNode.x + 1, y: currentNode.y },
+            { x: currentNode.x - 1, y: currentNode.y },
+            { x: currentNode.x, y: currentNode.y + 1 },
+            { x: currentNode.x, y: currentNode.y - 1 },
+          ];
+
+          neighbors.forEach((neighbor) => {
+            if (
+              isValidMove(neighbor.x, neighbor.y, map) &&
+              !closedSet.has(`${neighbor.x},${neighbor.y}`)
+            ) {
+              let gScore = currentNode.g + 1;
+              let hScore = heuristic(neighbor.x, neighbor.y, goal);
+              let fScore = gScore + hScore;
+              let existingNode = openSet.find(
+                (node) => node.x === neighbor.x && node.y === neighbor.y
+              );
+              if (existingNode) {
+                if (gScore < existingNode.g) {
+                  existingNode.g = gScore;
+                  existingNode.f = fScore;
+                  existingNode.parent = currentNode;
+                }
+              } else {
+                openSet.push(
+                  new Node(neighbor.x, neighbor.y, gScore, hScore, currentNode)
+                );
+              }
+            }
+          });
+        }
+
+        return null;
+      }
+
+      // Spieler 2
+      function algorithm3(x, y, map, goal) {
+        // Zufälliger Tiefensuche-Algorithmus (Placeholder für Beispiel)
+        let moves = [
+          [x + 1, y],
+          [x - 1, y],
+          [x, y + 1],
+          [x, y - 1],
+        ];
+        moves = moves.filter((move) => isValidMove(move[0], move[1], map));
+        if (moves.length > 0) {
+          return moves[floor(random(moves.length))];
+        }
+        return null;
+      }
+
+      function isValidMove(x, y, map) {
+        return x >= 0 && y >= 0 && x < cols && y < rows && map[y][x] === 0;
+      }
+    </script>
+  </body>
+</html>
